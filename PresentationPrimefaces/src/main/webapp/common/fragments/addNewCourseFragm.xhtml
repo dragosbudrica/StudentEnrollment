@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+<h:outputStylesheet library="css" name="commonForm.css"/>
+<h:body>
+    <h:form id="addNewCourseForm">
+        <p:panel id="panel" header="Add New Course">
+            <p:messages id="messages" showDetail="false"/>
+            <h:panelGrid columns="2" cellpadding="5">
+                <p:outputLabel for="courseName" value="Course Name:"/>
+                <p:inputText id="courseName" value="#{addCourseView.courseName}"
+                             required="true" label="Course name">
+                    <f:validateLength minimum="3"/>
+                </p:inputText>
+
+                <p:outputLabel for="category" value="Category:"/>
+                <p:selectOneMenu id="category" value="#{addCourseView.category}" required="true" label="Category">
+                    <f:selectItems value="#{addCourseView.getCategories()}"/>
+                </p:selectOneMenu>
+
+                <p:outputLabel for="numberOfLectures" value="Number of lectures: "/>
+                <p:spinner id="numberOfLectures" value="#{addCourseView.numberOfLectures}" min="3" max="12"/>
+
+                <p:outputLabel for="description" value="Description:"/>
+                <p:inputTextarea id="description" required="true" value="#{addCourseView.description}" rows="5"
+                                 cols="24" counter="display" maxlength="250"
+                                 counterTemplate="{0} characters remaining." autoResize="true"/>
+                <p:outputLabel for="display" value=""/>
+                <h:outputText id="display"/>
+            </h:panelGrid>
+        </p:panel>
+        <p:commandButton value="Submit" update=":addNewCourseForm"
+                         actionListener="#{addCourseView.addCourse}" ajax="true"/>
+    </h:form>
+</h:body>
+</html>

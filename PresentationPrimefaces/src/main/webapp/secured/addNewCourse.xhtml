@@ -1,0 +1,26 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui" xmlns:pm="http://primefaces.org/mobile"
+                template="/common/layout/defaultLayout.xhtml">
+    <ui:define name="title">
+        <title>Add Course</title>
+    </ui:define>
+    <ui:define name="menu">
+        <h:form>
+            <p:outputPanel id="menuPanel" layout="block">
+                <ul id="menu">
+                    <li><h:commandLink action="/secured/professorCourses.xhtml?faces-redirect=true" value="My Courses"/>
+                    </li>
+                    <li><h:commandLink action="/secured/timetable.xhtml?faces-redirect=true" value="Timetable"/></li>
+                    <li><h:commandLink action="/secured/grades.xhtml?faces-redirect=true" value="Grades"/></li>
+                </ul>
+            </p:outputPanel>
+        </h:form>
+    </ui:define>
+
+    <ui:define name="content">
+        <ui:include src="/common/fragments/addNewCourseFragm.xhtml"/>
+    </ui:define>
+</ui:composition>

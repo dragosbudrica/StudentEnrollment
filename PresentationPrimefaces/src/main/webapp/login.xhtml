@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/common/layout/defaultLayout.xhtml">
+
+
+    <ui:define name="title">
+        <title>Login Page</title>
+        <h:outputStylesheet library = "css" name = "/login.css" />
+    </ui:define>
+    <ui:define name="content">
+        <div class="app-title">
+            <h1>E-Learning App.</h1>
+        </div>
+        <!-- Form Module-->
+        <div class="module form-module">
+            <div class="toggle">
+            </div>
+            <div class="form">
+                <h2>Login to your account</h2>
+                <h:form id="doLogin" action="doLogin" method="post">
+                    <p:messages id="messages" showDetail="false"/>
+                    <p:panel id="panel">
+                        <p:outputLabel for="email" value="Email"/>
+                        <p:inputText id="email" label="email" required="true" value="#{loginView.email}">
+                            <f:validateLength minimum="3"/>
+                        </p:inputText> <br/>
+                        <p:outputLabel for="password" value="Password"/>
+                        <p:password id="password" required="true" label="password" value="#{loginView.password}">
+                            <f:validateLength minimum="3"/>
+                        </p:password> <br/>
+                        <p:commandButton value="Login" update="panel messages" id="login"
+                                         action="#{loginView.login}" ajax="false"/>
+                    </p:panel>
+                </h:form>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

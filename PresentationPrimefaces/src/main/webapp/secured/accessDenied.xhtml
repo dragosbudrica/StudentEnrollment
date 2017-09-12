@@ -1,0 +1,48 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/common/layout/defaultLayout.xhtml">
+    <ui:define name="title">
+        <title>Access Denied</title>
+    </ui:define>
+    <ui:define name="menu">
+        <h:form>
+            <p:outputPanel id="menuPanel" layout="block">
+                <ul id="menu">
+                    <li>
+                        <h:commandLink action="/secured/allCourses.xhtml?faces-redirect=true" value="All Courses" rendered="#{sessionScope.user.role.roleName eq 'Student'}"/>
+                        <h:commandLink action="/secured/addNewCourse.xhtml?faces-redirect=true" value="Add Course" rendered="#{sessionScope.user.role.roleName eq 'Professor'}"/>
+                        <h:commandLink action="/secured/addNewAccount.xhtml?faces-redirect=true" value="Add Account" rendered="#{sessionScope.user.role.roleName eq 'Admin'}"/>
+                    </li>
+                    <li>
+                        <h:commandLink action="/secured/studentCourses.xhtml?faces-redirect=true" value="My Courses" rendered="#{sessionScope.user.role.roleName eq 'Student'}"/>
+                        <h:commandLink action="/secured/professorCourses.xhtml?faces-redirect=true" value="My Courses" rendered="#{sessionScope.user.role.roleName eq 'Professor'}"/>
+                        <h:commandLink action="/secured/courseScheduling.xhtml?faces-redirect=true" value="Scheduling" rendered="#{sessionScope.user.role.roleName eq 'Admin'}"/>
+                    </li>
+                    <li>
+                        <h:commandLink action="/secured/myGrades.xhtml?faces-redirect=true" value="My Grades" rendered="#{sessionScope.user.role.roleName eq 'Student'}"/>
+                        <h:commandLink action="/secured/grades.xhtml?faces-redirect=true" value="Grades" rendered="#{sessionScope.user.role.roleName eq 'Professor'}"/>
+                        <h:commandLink action="/secured/validation.xhtml?faces-redirect=true" value="Validation" rendered="#{sessionScope.user.role.roleName eq 'Admin'}"/>
+                    </li>
+                    <li>
+                        <h:commandLink action="/secured/timetable.xhtml?faces-redirect=true" value="Timetable" rendered="#{sessionScope.user.role.roleName eq 'Student'}"/>
+                        <h:commandLink action="/secured/timetable.xhtml?faces-redirect=true" value="Timetable" rendered="#{sessionScope.user.role.roleName eq 'Professor'}"/>
+                    </li>
+                </ul>
+            </p:outputPanel>
+        </h:form>
+    </ui:define>
+
+    <ui:define name="content">
+        <img src="/resources/images/oops.jpg" alt=""/>
+        <h1>
+            HTTP Error 401 Unauthorized
+        </h1>
+        <h3>
+            We are sorry, but you are not authorized to view this page.
+            Thank you.
+        </h3>
+    </ui:define>
+</ui:composition>

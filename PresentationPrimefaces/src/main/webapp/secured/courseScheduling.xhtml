@@ -1,0 +1,60 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/common/layout/defaultLayout.xhtml">
+    <ui:define name="title">
+        <title>Course Scheduling</title>
+    </ui:define>
+    <ui:define name="menu">
+        <h:form>
+            <p:outputPanel id="menuPanel" layout="block">
+                <ul id="menu">
+                    <li><h:commandLink action="/secured/addNewAccount.xhtml?faces-redirect=true" value="Add Account"/></li>
+                    <li><h:commandLink action="/secured/validation.xhtml?faces-redirect=true" value="Validation"/></li>
+                </ul>
+            </p:outputPanel>
+        </h:form>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form>
+            <p:growl id="messages" showDetail="true" />
+
+            <h:panelGrid columnClasses="value">
+                <h3 style="margin-top: 0">Course Scheduling</h3>
+                <p:schedule id="schedule" value="#{courseSchedulingView.eventModel}" widgetVar="myschedule" timeZone="GMT+3">
+                    <p:ajax event="dateSelect" listener="#{courseSchedulingView.onDateSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
+                    <p:ajax event="eventSelect" listener="#{courseSchedulingView.onEventSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
+                </p:schedule>
+            </h:panelGrid>
+
+            <p:dialog widgetVar="eventDialog" header="Course Details" showEffect="clip" hideEffect="clip" resizable="false">
+                <h:panelGrid id="eventDetails" columns="2">
+                    <p:outputLabel for="title" value="Course Name:"/>
+                    <p:selectOneMenu id="title" value="#{courseSchedulingView.event.title}" style="width:150px">
+                        <f:selectItems value="#{courseSchedulingView.getAllCourseTitles()}"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="from" value="From:"/>
+                    <p:calendar id="from" value="#{courseSchedulingView.event.startDate}" timeZone="GMT+3"
+                                pattern="dd/MM/yyyy HH:mm">
+                        <f:validator validatorId="dateValidator"/>
+                    </p:calendar>
+                    <p:commandButton type="reset" value="Reset"/>
+                    <p:commandButton id="addButton" value="Save" actionListener="#{courseSchedulingView.addEvent}"
+                                     onsuccess="PF('myschedule').update();" update="eventDetails">
+                    </p:commandButton>
+                    <p:message for="from" style="color:red"/>
+                </h:panelGrid>
+            </p:dialog>
+        </h:form>
+        <style type="text/css">
+            .value {
+                width: 800px;
+            }
+        </style>
+    </ui:define>
+
+</ui:composition>

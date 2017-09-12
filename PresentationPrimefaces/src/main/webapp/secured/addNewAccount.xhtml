@@ -1,0 +1,70 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/common/layout/defaultLayout.xhtml">
+    <ui:define name="title">
+        <title>Add Account</title>
+        <h:outputStylesheet library="css" name="commonForm.css"/>
+    </ui:define>
+    <ui:define name="menu">
+        <h:form>
+            <p:outputPanel id="menuPanel" layout="block">
+                <ul id="menu">
+                    <li><h:commandLink action="/secured/courseScheduling.xhtml?faces-redirect=true" value="Scheduling"/>
+                    </li>
+                    <li><h:commandLink action="/secured/validation.xhtml?faces-redirect=true" value="Validation"/></li>
+                </ul>
+            </p:outputPanel>
+        </h:form>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="addNewAccountForm">
+            <p:panel id="panel" header="Add New Account">
+                <p:messages id="messages" showDetail="false"/>
+                <h:panelGrid columns="2" cellpadding="5">
+                    <p:outputLabel for="firstName" value="First Name:"/>
+                    <p:inputText id="firstName" value="#{addAccountView.firstName}"
+                                 required="true" label="First name">
+                        <f:validateLength minimum="3"/>
+                    </p:inputText>
+
+                    <p:outputLabel for="lastName" value="Last Name:"/>
+                    <p:inputText id="lastName" value="#{addAccountView.lastName}"
+                                 required="true" label="Last name">
+                        <f:validateLength minimum="3"/>
+                    </p:inputText>
+
+                    <p:outputLabel for="ssn" value="SSN:"/>
+                    <p:inputText id="ssn" value="#{addAccountView.ssn}"
+                                 required="true" label="SSN">
+                        <f:validateLength minimum="3"/>
+                    </p:inputText>
+
+                    <p:outputLabel for="email" value="Email:"/>
+                    <p:inputText id="email" value="#{addAccountView.email}"
+                                 required="true" label="Email">
+                        <f:validateLength minimum="3"/>
+                    </p:inputText>
+
+                    <p:outputLabel for="password" value="Password:"/>
+                    <p:password id="password"
+                                value="#{addAccountView.password}" required="true"
+                                label="Password">
+                        <f:validateLength minimum="3"/>
+                    </p:password>
+
+                    <p:outputLabel for="role" value="Role:"/>
+                    <p:selectOneMenu id="role" value="#{addAccountView.role}" style="width:125px">
+                        <f:selectItem itemLabel="Professor" itemValue="Professor"/>
+                        <f:selectItem itemLabel="Student" itemValue="Student"/>
+                    </p:selectOneMenu>
+                </h:panelGrid>
+            </p:panel>
+            <p:commandButton value="Submit" update="panel"
+                             action="#{addAccountView.addAccount}"/>
+        </h:form>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:ui="http://java.sun.com/jsf/facelets"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:p="http://primefaces.org/ui"
+	  xmlns:f="http://java.sun.com/jsf/core">
+
+<h:outputStylesheet library = "css" name = "/defaultLayout.css" />
+<f:view contentType="text/html" id="fview">
+	<f:metadata>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<ui:insert name="metadata" />
+	</f:metadata>
+
+	<h:head>
+		<link rel="shortcut icon" type="image/x-icon" href="/resources/images/favicon.ico"/>
+		<ui:insert name="title" />
+		<p:dialog modal="true" widgetVar="statusDialog" draggable="false" closable="false"
+				  resizable="false" position="center" showHeader="false" maximizable="false" minimizable="false">
+			<p:graphicImage value="#{resource['images/ajax-loader.gif']}" />
+		</p:dialog>
+	</h:head>
+
+	<h:body onload="PF('statusDialog').hide();">
+		<p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();" />
+
+		<p:layout fullPage="true" resizeTitle="resize">
+			<p:layoutUnit position="north" id="north" >
+				<ui:include src="/common/templates/defaultHeader.xhtml" />
+			</p:layoutUnit>
+
+			<p:layoutUnit position="west" id="west" resizable="false">
+				<p:graphicImage class="logo" value="/resources/images/elearning.png"/>
+				<ui:insert name="menu" id="menu"/>
+			</p:layoutUnit>
+
+			<p:layoutUnit styleClass="layoutUnitCenter" position="center" id="center">
+				<ui:insert name="content" />
+			</p:layoutUnit>
+
+			<p:layoutUnit position="east" size="0" style="width:0px; display:none;" id="east">
+			</p:layoutUnit>
+
+			<p:layoutUnit position="south" resizable="true" id="south">
+				<ui:include src="/common/templates/defaultFooter.xhtml" />
+			</p:layoutUnit>
+		</p:layout>
+	</h:body>
+
+</f:view>
+</html>

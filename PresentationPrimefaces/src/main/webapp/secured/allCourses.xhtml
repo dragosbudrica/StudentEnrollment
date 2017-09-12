@@ -1,0 +1,65 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/common/layout/defaultLayout.xhtml">
+    <ui:define name="title">
+        <title>All Courses</title>
+        <h:outputStylesheet library = "css" name = "table.css" />
+    </ui:define>
+    <ui:define name="menu">
+        <h:form>
+            <p:outputPanel id="menuPanel" layout="block">
+                <ul id="menu">
+                    <li><h:commandLink action="/secured/studentCourses.xhtml?faces-redirect=true" value="My Courses"/></li>
+                    <li><h:commandLink action="/secured/timetable.xhtml?faces-redirect=true" value="Timetable"/></li>
+                    <li><h:commandLink action="/secured/myGrades.xhtml?faces-redirect=true" value="My Grades"/></li>
+                </ul>
+            </p:outputPanel>
+        </h:form>
+    </ui:define>
+
+    <ui:define name="content">
+        <p:growl id="message" showDetail="true" />
+        <h:form id="form">
+            <p:dataTable value="#{allCoursesView.getAllCourses()}" var="courseDto" rows="5"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                         paginatorPosition="bottom">
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column colspan="4" headerText="All Courses"/>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="CourseName" sortBy="#{courseDto.courseName}"/>
+                        <p:column headerText="Category"/>
+                        <p:column headerText="Professor"/>
+                        <p:column style="width:32px;text-align: center"/>
+                    </p:row>
+                </p:columnGroup>
+                <p:column>
+                    <h:outputText value="#{courseDto.courseName}" />
+                </p:column>
+                <p:column>
+                    <h:outputText value="#{courseDto.category}" />
+                </p:column>
+                <p:column>
+                    <h:outputText value="#{courseDto.professor}" />
+                </p:column>
+                <p:column>
+                    <p:commandButton title="Enroll" style="color:green" actionListener="#{allCoursesView.enroll(courseDto)}" update="message">
+                        <p:confirm header="Confirmation" message="Are you sure you want to be enrolled at this course?" icon="ui-icon-alert"/>
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton style="float:right" value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>
+                <p:commandButton style="float:right" value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+            </p:confirmDialog>
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

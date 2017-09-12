@@ -1,0 +1,143 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/common/layout/defaultLayout.xhtml">
+    <ui:define name="title">
+        <title>My Courses</title>
+    </ui:define>
+    <ui:define name="menu">
+        <h:form>
+            <p:outputPanel id="menuPanel" layout="block">
+                <ul id="menu">
+                    <li><h:commandLink action="/secured/addNewCourse.xhtml?faces-redirect=true" value="Add Course"/>
+                    </li>
+                    <li><h:commandLink action="/secured/timetable.xhtml?faces-redirect=true" value="Timetable"/></li>
+                    <li><h:commandLink action="/secured/grades.xhtml?faces-redirect=true" value="Grades"/></li>
+                </ul>
+            </p:outputPanel>
+        </h:form>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form" style="width:46%; float:left">
+            <p:growl id="message" showDetail="true"/>
+            <p:dataTable value="#{professorCoursesView.getProfessorCourses()}"
+                         var="courseDto" rows="5" editable="true"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                         paginatorPosition="bottom">
+                <p:ajax event="rowEdit" listener="#{professorCoursesView.onRowEdit}" update=":form:message"/>
+                <p:ajax event="rowEditCancel" listener="#{professorCoursesView.onRowCancel}" update=":form:message"/>
+
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column colspan="5" headerText="My Courses"/>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="Course Name"/>
+                        <p:column headerText="Category"/>
+                        <p:column/>
+                        <p:column/>
+                        <p:column>
+                            <f:facet name="header" colspan="1">
+                                <p:commandButton icon="ui-icon-plus" onclick="PF('dlg2').show()"/>
+                            </f:facet>
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                <p:column>
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <p:commandLink>
+                                <h:outputText value="#{courseDto.courseName}"/>
+                                <p:ajax update=":form2:lectures"
+                                        listener="#{professorCoursesView.setSelectedCourse(courseDto)}"/>
+                            </p:commandLink>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText id="modelInput" value="#{courseDto.courseName}" style="width:100%"/>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+                <p:column>
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{courseDto.category}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <h:selectOneMenu value="#{courseDto.category}" style="width:100%">
+                                <f:selectItems value="#{professorCoursesView.getCategories()}" var="category"
+                                               itemLabel="#{category}" itemValue="#{category}"/>
+                            </h:selectOneMenu>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+                <p:column>
+                    <p:rowEditor/>
+                </p:column>
+                <p:column>
+                    <p:commandButton icon="ui-icon-trash" actionListener="#{professorCoursesView.remove(courseDto)}"
+                                     update=":form">
+                        <p:confirm header="Confirmation" message="Are you sure you want to delete this course?"
+                                   icon="ui-icon-alert"/>
+                    </p:commandButton>
+
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                        <p:commandButton style="float:right" value="No" type="button" styleClass="ui-confirmdialog-no"
+                                         icon="ui-icon-close"/>
+                        <p:commandButton style="float:right" value="Yes" type="button" styleClass="ui-confirmdialog-yes"
+                                         icon="ui-icon-check"/>
+                    </p:confirmDialog>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <h:form id="form2" style="width:52%; float:right">
+            <p:dataTable id="lectures"
+                         value="#{professorCoursesView.getListOfLectures()}"
+                         var="lecture"
+                         rows="5"
+                         styleClass="#{professorCoursesView.selectedCourse == null ? 'hiddenByDefault':''}"
+                         rowIndexVar="rowIndex"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                         paginatorPosition="bottom">
+
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column colspan="2" headerText="#{professorCoursesView.selectedCourse.courseName}"/>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="Lecture"/>
+                        <p:column headerText="PDF"/>
+                    </p:row>
+                </p:columnGroup>
+                <p:column>
+                    <h:outputText value="#{lecture.name}"/>
+                </p:column>
+                <p:column>
+                    <p:commandButton style="float:left" rendered="#{lecture.attachment != null}" ajax="false" value="Download"
+                                     onclick="PrimeFaces.monitorDownload(start, stop);"
+                                     icon="ui-icon-arrowthick-1-s">
+                        <p:fileDownload value="#{professorCoursesView.downloadPDF(lecture)}"/>
+                    </p:commandButton>
+                    <p:commandButton style="float:right" rendered="#{lecture.attachment != null}" icon="ui-icon-circle-close" actionListener="#{professorCoursesView.removeAttachment(lecture)}" update=":form2"/>
+                    <p:growl id="messages" showDetail="true"/>
+                    <p:fileUpload rendered="#{lecture.attachment == null}"
+                                  fileUploadListener="#{professorCoursesView.upload}" mode="advanced"
+                                  dragDropSupport="false" update=":form2:lectures"
+                                  fileLimit="1" allowTypes="/(\.|\/)(pdf)$/">
+                        <f:attribute name="lectureId" value="#{lecture.lectureId}"/>
+                    </p:fileUpload>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <p:dialog widgetVar="dlg2" modal="false" height="385" position="center">
+            <p:ajax event="close" update=":form" listener="#{professorCoursesView.closeAddCourseDialog()}"/>
+            <ui:include src="/common/fragments/addNewCourseFragm.xhtml"/>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

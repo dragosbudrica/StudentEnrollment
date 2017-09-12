@@ -1,0 +1,114 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/common/layout/defaultLayout.xhtml">
+    <ui:define name="title">
+        <title>Grades</title>
+    </ui:define>
+    <ui:define name="menu">
+        <h:form>
+            <p:outputPanel id="menuPanel" layout="block">
+                <ul id="menu">
+                    <li><h:commandLink action="/secured/professorCourses.xhtml?faces-redirect=true" value="My Courses"/>
+                    </li>
+                    <li><h:commandLink action="/secured/addNewCourse.xhtml?faces-redirect=true" value="Add Course"/>
+                    </li>
+                    <li><h:commandLink action="/secured/timetable.xhtml?faces-redirect=true" value="Timetable"/></li>
+                </ul>
+            </p:outputPanel>
+        </h:form>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl id="message" showDetail="true"/>
+            <p:dataTable style="width:46%; float:left" id="courses"
+                         value="#{professorGradesView.getProfessorCoursesWithEnrolledStudents()}"
+                         var="courseDto"
+                         rows="5"
+                         rowIndexVar="rowIndex"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                         paginatorPosition="bottom">
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column colspan="3" headerText="My Courses"/>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="Course Name"/>
+                        <p:column headerText="Category"/>
+                        <p:column headerText="Students"/>
+                    </p:row>
+                </p:columnGroup>
+                <p:column>
+                    <p:commandLink>
+                        <h:outputText value="#{courseDto.courseName}"/>
+                        <p:ajax update=":form:enrolledStudents"
+                                listener="#{professorGradesView.setSelectedCourse(courseDto)}"/>
+                    </p:commandLink>
+                </p:column>
+                <p:column>
+                    <h:outputText value="#{courseDto.category}"/>
+                </p:column>
+                <p:column>
+                    <h:outputText value="#{courseDto.numberOfEnrolledStudents} enrolled student(s)"/>
+                </p:column>
+            </p:dataTable>
+
+            <p:dataTable style="width:52%; float:right" value="#{professorGradesView.getEnrolledStudents(professorGradesView.selectedCourse)}"
+                         var="student" rows="5" editable="true"
+                         paginator="true" editMode="cell"
+                         styleClass="#{professorGradesView.selectedCourse == null ? 'hiddenByDefault':''}"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                         paginatorPosition="bottom" id="enrolledStudents" rowIndexVar="index" widgetVar="cellStudents">
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column colspan="5" headerText="#{professorGradesView.selectedCourse.courseName}"/>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#"/>
+                        <p:column headerText="Last Name"/>
+                        <p:column headerText="First Name"/>
+                        <p:column headerText="Grade"/>
+                        <p:column headerText="Validated By Admin"/>
+                    </p:row>
+                </p:columnGroup>
+                <p:column>
+                    <h:outputText value="#{index + 1}"/>
+                </p:column>
+                <p:column>
+                    <h:outputText value="#{student.lastName}"/>
+                </p:column>
+                <p:column>
+                    <h:outputText value="#{student.firstName}"/>
+                </p:column>
+                <p:column>
+                    <h:outputText rendered="#{student.validated}" value="#{student.result}" />
+                    <p:cellEditor rendered="#{not student.validated}">
+                        <f:facet name="output">
+                            <h:outputText rendered="#{student.result != null}" value="#{student.result}"/>
+                            <h:outputText rendered="#{student.result == null}" value="-"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <h:selectOneMenu value="#{student}" style="width:100%" valueChangeListener="#{professorGradesView.onResultChange}">
+                                <f:selectItems value="#{professorGradesView.getPossibleResults()}" var="result"
+                                               itemLabel="#{result}" itemValue="#{result}"/>
+                            </h:selectOneMenu>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+                <p:column>
+                    <h:outputText value="#{student.validated}"/>
+                </p:column>
+            </p:dataTable>
+
+            <p:contextMenu for="enrolledStudents" widgetVar="cMenu">
+                <p:menuitem value="Edit Cell" icon="ui-icon-search"
+                            onclick="PF('cellStudents').showCellEditor();return false;"/>
+                <p:menuitem value="Hide Menu" icon="ui-icon-close" onclick="PF('cMenu').hide()"/>
+            </p:contextMenu>
+        </h:form>
+    </ui:define>
+</ui:composition>

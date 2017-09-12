@@ -1,0 +1,124 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/common/layout/defaultLayout.xhtml">
+    <ui:define name="title">
+        <title>Validation</title>
+    </ui:define>
+    <ui:define name="menu">
+        <h:form>
+            <p:outputPanel id="menuPanel" layout="block">
+                <ul id="menu">
+                    <li><h:commandLink action="/secured/addNewAccount.xhtml?faces-redirect=true" value="Add Account"/>
+                    </li>
+                    <li><h:commandLink action="/secured/courseScheduling.xhtml?faces-redirect=true" value="Scheduling"/>
+                    </li>
+                </ul>
+            </p:outputPanel>
+        </h:form>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl id="message" showDetail="true"/>
+            <p:dataTable style="width:46%; float:left" id="courses"
+                         value="#{validationView.getAllCourses()}"
+                         var="courseDto"
+                         rows="5"
+                         rowIndexVar="rowIndex"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                         paginatorPosition="bottom">
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column colspan="3" headerText="My Courses"/>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="Course Name"/>
+                        <p:column headerText="Category"/>
+                        <p:column headerText="Professor"/>
+                    </p:row>
+                </p:columnGroup>
+                <p:column>
+                    <p:commandLink>
+                        <h:outputText value="#{courseDto.courseName}"/>
+                        <p:ajax update=":enrolledStdForm"
+                                listener="#{validationView.setSelectedCourse(courseDto)}"/>
+                    </p:commandLink>
+                </p:column>
+                <p:column>
+                    <h:outputText value="#{courseDto.category}"/>
+                </p:column>
+                <p:column>
+                    <h:outputText value="#{courseDto.professor}"/>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <h:form id="enrolledStdForm">
+            <p:dataTable rendered="#{validationView.isSomebodyEnrolled() and validationView.isEveryoneWithGrade()}"
+                         style="width:52%; float:right"
+                         value="#{validationView.getEnrolledStudentsWithStates()}"
+                         var="student" rows="5"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                         paginatorPosition="bottom" id="enrolledStudents" rowIndexVar="index" widgetVar="cellStudents">
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column colspan="5" headerText="#{validationView.selectedCourse.courseName}"/>
+                        <p:column>
+                            <f:facet name="header">
+                                <p:commandButton disabled="#{validationView.isValidateBtnDisabled()}" title="Validate"
+                                                 style="color:green" actionListener="#{validationView.validate()}" update=":enrolledStdForm"/>
+                                <p:commandButton disabled="#{validationView.isInvalidateBtnDisabled()}"
+                                                 title="Invalidate" style="color:red" actionListener="#{validationView.invalidate()}" update=":enrolledStdForm"/>
+                            </f:facet>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:selectOneMenu id="options" value="#{validationView.selectedOption}"
+                                                 style="width:150px">
+                                    <p:ajax listener="#{validationView.onOptionChange}" update=":enrolledStdForm"/>
+                                    <f:selectItem itemLabel="Select Option" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{validationView.getOptions()}" var="option"
+                                                   itemLabel="#{option}" itemValue="#{option}"/>
+                                </h:selectOneMenu>
+                            </f:facet>
+                        </p:column>
+                        <p:column headerText="Last Name"/>
+                        <p:column headerText="First Name"/>
+                        <p:column headerText="Grade"/>
+                        <p:column headerText="Validated"/>
+                    </p:row>
+                </p:columnGroup>
+                <p:column>
+                    <p:selectBooleanCheckbox value="#{student.state}">
+                        <p:ajax update=":enrolledStdForm" />
+                    </p:selectBooleanCheckbox>
+                </p:column>
+                <p:column>
+                    <h:outputText value="#{student.user.lastName}"/>
+                </p:column>
+                <p:column>
+                    <h:outputText value="#{student.user.firstName}"/>
+                </p:column>
+                <p:column>
+                    <h:outputText value="#{student.user.result}"/>
+                </p:column>
+                <p:column>
+                    <h:outputText value="#{student.user.validated}"/>
+                </p:column>
+            </p:dataTable>
+
+            <h:outputText rendered="#{validationView.nobodyEnrolled()}" styleClass="warning"
+                          value="There are no enrolled students at this course yet!"/>
+            <h:outputText rendered="#{validationView.isSomebodyEnrolled() and not validationView.isEveryoneWithGrade()}"
+                          styleClass="warning" value="The professor did not evaluate all the results yet!"/>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

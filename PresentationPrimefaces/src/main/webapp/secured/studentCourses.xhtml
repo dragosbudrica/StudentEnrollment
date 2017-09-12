@@ -1,0 +1,85 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/common/layout/defaultLayout.xhtml">
+    <ui:define name="title">
+        <title>My Courses</title>
+    </ui:define>
+    <ui:define name="menu">
+        <h:form>
+            <p:outputPanel id="menuPanel" layout="block">
+                <ul id="menu">
+                    <li><h:commandLink action="/secured/allCourses.xhtml?faces-redirect=true" value="All Courses"/></li>
+                    <li><h:commandLink action="/secured/timetable.xhtml?faces-redirect=true" value="Timetable"/></li>
+                    <li><h:commandLink action="/secured/myGrades.xhtml?faces-redirect=true" value="My Grades"/></li>
+                </ul>
+            </p:outputPanel>
+        </h:form>
+    </ui:define>
+
+    <ui:define name="content">
+        <p:growl id="message" showDetail="true"/>
+        <h:form id="form">
+                        <p:dataTable style="width:46%; float:left" value="#{studentCoursesView.getStudentCourses()}"
+                                     var="courseDto" rows="5"
+                                     paginator="true"
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                     paginatorPosition="bottom" >
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column colspan="3" headerText="My Courses"/>
+                                </p:row>
+                                <p:row>
+                                    <p:column headerText="Course Name"/>
+                                    <p:column headerText="Category"/>
+                                    <p:column headerText="Professor"/>
+                                </p:row>
+                            </p:columnGroup>
+                            <p:column>
+                                <p:commandLink update=":form:lectures" action="#{studentCoursesView.setSelectedCourse(courseDto)}">
+                                    <h:outputText value="#{courseDto.courseName}"/>
+                                </p:commandLink>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{courseDto.category}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{courseDto.professor}"/>
+                            </p:column>
+                        </p:dataTable>
+
+                        <p:dataTable style="width:52%; float:right"  id="lectures"
+                                     value="#{studentCoursesView.getListOfLectures(studentCoursesView.selectedCourse)}"
+                                     var="lecture"
+                                     rows="5"
+                                     styleClass="#{studentCoursesView.selectedCourse == null ? 'hiddenByDefault':''}"
+                                     rowIndexVar="rowIndex"
+                                     paginator="true"
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                     paginatorPosition="bottom">
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column colspan="2" headerText="#{studentCoursesView.selectedCourse.courseName}"/>
+                                </p:row>
+                                <p:row>
+                                    <p:column headerText="Lecture"/>
+                                    <p:column headerText="PDF"/>
+                                </p:row>
+                            </p:columnGroup>
+                            <p:column>
+                                <h:outputText value="#{lecture.name}"/>
+                            </p:column>
+                            <p:column>
+                                <p:commandButton rendered="#{lecture.attachment != null}" ajax="false" value="Download"
+                                                 onclick="PrimeFaces.monitorDownload(start, stop);"
+                                                 icon="ui-icon-arrowthick-1-s">
+                                    <p:fileDownload value="#{studentCoursesView.downloadPDF(lecture)}"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

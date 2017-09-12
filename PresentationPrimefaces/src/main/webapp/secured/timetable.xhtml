@@ -1,0 +1,47 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/common/layout/defaultLayout.xhtml">
+    <ui:define name="title">
+        <title>Timetable</title>
+    </ui:define>
+    <ui:define name="menu">
+        <h:form>
+            <p:outputPanel id="menuPanel" layout="block">
+                <ul id="menu">
+                    <li>
+                        <h:commandLink action="/secured/allCourses.xhtml?faces-redirect=true" value="All Courses" rendered="#{timetableView.role eq 'Student'}"/>
+                        <h:commandLink action="/secured/professorCourses.xhtml?faces-redirect=true" value="My Courses" rendered="#{timetableView.role eq 'Professor'}"/>
+                    </li>
+                    <li>
+                        <h:commandLink action="/secured/studentCourses.xhtml?faces-redirect=true" value="My Courses" rendered="#{timetableView.role eq 'Student'}"/>
+                        <h:commandLink action="/secured/addNewCourse.xhtml?faces-redirect=true" value="Add Course" rendered="#{timetableView.role eq 'Professor'}"/>
+                    </li>
+                    <li>
+                        <h:commandLink action="/secured/myGrades.xhtml?faces-redirect=true" value="My Grades" rendered="#{timetableView.role eq 'Student'}"/>
+                        <h:commandLink action="/secured/grades.xhtml?faces-redirect=true" value="Grades" rendered="#{timetableView.role eq 'Professor'}"/>
+                    </li>
+                </ul>
+            </p:outputPanel>
+        </h:form>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl id="messages" showDetail="true"/>
+            <h:panelGrid columnClasses="value">
+                <h3 style="margin-top: 0">Timetable</h3>
+                <h:graphicImage rendered="#{not timetableView.rendered}" value="/resources/images/under-construction-logo.gif" />
+                <p:schedule id="schedule" rendered="#{timetableView.rendered}" value="#{timetableView.eventModel}" widgetVar="myschedule" timeZone="GMT+3"/>
+            </h:panelGrid>
+        </h:form>
+        <style type="text/css">
+            .value {
+                width: 800px;
+            }
+        </style>
+    </ui:define>
+
+</ui:composition>
