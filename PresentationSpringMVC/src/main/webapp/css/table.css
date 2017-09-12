@@ -1,0 +1,32 @@
+table {
+    border-collapse: collapse;
+}
+
+table th {
+    text-align: left;
+    background-color: #3a6070;
+    color: #FFF;
+    padding: 4px 30px 4px 8px;
+}
+
+table td {
+    border: 1px solid #e3e3e3;
+    padding: 4px 8px;
+}
+
+table tr:nth-child(odd) td {
+    background-color: #e7edf0;
+}
+
+table tfoot {
+    text-align: left;
+    background-color: #3a6070;
+    color: #FFF;
+    padding: 4px 30px 4px 8px;
+}
+
+#pagination a {
+    display:inline-block;
+    margin-right:5px;
+
+}

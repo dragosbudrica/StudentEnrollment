@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE tiles-definitions PUBLIC
+        "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+        "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+
+<tiles-definitions>
+
+    <definition name="base-definition"
+                template="/WEB-INF/views/tiles/layout/defaultLayout.jsp">
+        <put-attribute name="title" value=""/>
+        <put-attribute name="header" value="/WEB-INF/views/tiles/templates/defaultHeader.jsp"/>
+        <put-attribute name="menu" value="/WEB-INF/views/tiles/templates/defaultMenu.jsp"/>
+        <put-attribute name="body" value=""/>
+        <put-attribute name="footer" value="/WEB-INF/views/tiles/templates/defaultFooter.jsp"/>
+    </definition>
+
+    <definition name="login" extends="base-definition">
+        <put-attribute name="title" value="Login Page"/>
+        <put-attribute name="body" value="/WEB-INF/views/login.jsp"/>
+    </definition>
+
+    <definition name="newAccount" extends="base-definition">
+        <put-attribute name="title" value="Create New Account"/>
+        <put-attribute name="body" value="/WEB-INF/views/addNewAccount.jsp"/>
+    </definition>
+
+    <definition name="allCourses" extends="base-definition">
+        <put-attribute name="title" value="All Courses"/>
+        <put-attribute name="body" value="/WEB-INF/views/allCourses.jsp"/>
+    </definition>
+
+    <definition name="professorCourses" extends="base-definition">
+        <put-attribute name="title" value="My Courses"/>
+        <put-attribute name="body" value="/WEB-INF/views/professorCourses.jsp"/>
+    </definition>
+
+    <definition name="studentCourses" extends="base-definition">
+        <put-attribute name="title" value="My Courses"/>
+        <put-attribute name="body" value="/WEB-INF/views/studentCourses.jsp"/>
+    </definition>
+
+    <definition name="newCourse" extends="base-definition">
+        <put-attribute name="title" value="Add New Course"/>
+        <put-attribute name="body" value="/WEB-INF/views/addNewCourse.jsp"/>
+    </definition>
+
+    <definition name="timetable" extends="base-definition">
+        <put-attribute name="title" value="Timetable"/>
+        <put-attribute name="body" value="/WEB-INF/views/timetable.jsp"/>
+    </definition>
+
+    <definition name="courseScheduling" extends="base-definition">
+        <put-attribute name="title" value="Course Scheduling"/>
+        <put-attribute name="body" value="/WEB-INF/views/courseScheduling.jsp"/>
+    </definition>
+
+    <definition name="grades" extends="base-definition">
+        <put-attribute name="title" value="Grades"/>
+        <put-attribute name="body" value="/WEB-INF/views/grades.jsp"/>
+    </definition>
+
+    <definition name="myGrades" extends="base-definition">
+        <put-attribute name="title" value="My Grades"/>
+        <put-attribute name="body" value="/WEB-INF/views/myGrades.jsp"/>
+    </definition>
+
+    <definition name="validation" extends="base-definition">
+        <put-attribute name="title" value="Validation"/>
+        <put-attribute name="body" value="/WEB-INF/views/validation.jsp"/>
+    </definition>
+
+    <definition name="accessDenied" extends="base-definition">
+        <put-attribute name="title" value="Access Denied"/>
+        <put-attribute name="body" value="/WEB-INF/views/accessDenied.jsp"/>
+    </definition>
+
+</tiles-definitions>
