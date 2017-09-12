@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kepler.rominfo.persistence.mappers.ResourceMapper">
+
+    <resultMap type="Resource" id="ResourceResult">
+        <id property="resourceId" column="resourceid"/>
+        <result property="resourceName" column="resourcename"/>
+    </resultMap>
+
+    <select id="getResourceByName" resultMap="ResourceResult">
+        SELECT
+        r."resourceid" as resourceId,
+        r."resourcename" AS resourcename
+        FROM public."resource" r
+        WHERE r."resourcename" = #{resourceName}
+    </select>
+
+</mapper>

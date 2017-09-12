@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kepler.rominfo.persistence.mappers.LectureMapper">
+
+    <resultMap type="Lecture" id="LectureResult">
+        <id property="lectureId" column="lectureid"/>
+        <result property="name" column="name"/>
+        <result property="attachment" column="attachment"/>
+    </resultMap>
+
+    <insert id="createLecture">
+        INSERT INTO lecture (attachment, coursecode, name)
+        VALUES (NULL, #{courseCode}, #{name})
+    </insert>
+
+    <select id="getLectures" resultMap="LectureResult">
+        SELECT
+            l."lectureid"  AS lectureId,
+            l."name"       AS name,
+            l."attachment" AS attachment
+        FROM public."lecture" l
+        WHERE l."coursecode" = #{courseCode}
+        ORDER BY l."name";
+    </select>
+
+    <update id="uploadPDF">
+        UPDATE lecture
+        SET attachment = #{file}
+        WHERE lectureid = #{lectureId}
+    </update>
+
+    <select id="getLectureByNameAndCourseCode" resultMap="LectureResult">
+        SELECT
+            l."lectureid"  AS lectureId,
+            l."name"       AS name,
+            l."attachment" AS attachment
+        FROM public."lecture" l
+        WHERE l."coursecode" = #{courseCode}
+              AND l."name" = #{lectureName}
+    </select>
+
+    <select id="getLectureById" resultMap="LectureResult">
+        SELECT
+            l."lectureid"  AS lectureId,
+            l."name"       AS name,
+            l."attachment" AS attachment
+        FROM public."lecture" l
+        WHERE l."lectureid" = #{lectureId}
+    </select>
+
+    <update id="removeLectureAttachment">
+        UPDATE lecture
+        SET attachment = NULL
+        WHERE lectureid = #{lectureId}
+    </update>
+
+</mapper>

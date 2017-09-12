@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kepler.rominfo.persistence.mappers.UserMapper">
+
+    <resultMap type="User" id="UserResult">
+        <id property="userId" column="userid"/>
+        <result property="firstName" column="firstname"/>
+        <result property="lastName" column="lastname"/>
+        <result property="ssn" column="ssn"/>
+        <result property="email" column="email"/>
+        <result property="password" column="password"/>
+        <result property="result" column="result"/>
+        <result property="validated" column="validated"/>
+        <association property="role" resultMap="RoleResult" columnPrefix="role_"/>
+    </resultMap>
+
+    <resultMap type="Role" id="RoleResult">
+        <id property="roleId" column="roleid"/>
+        <id property="roleName" column="rolename"/>
+    </resultMap>
+
+    <resultMap type="Student" id="StudentResult">
+        <id property="studentId" column="studentid"/>
+    </resultMap>
+
+    <resultMap type="Professor" id="ProfessorResult">
+        <id property="professorId" column="professorid"/>
+    </resultMap>
+
+    <select id="getAllUsers" resultMap="UserResult">
+        SELECT
+            u."userid"    AS userId,
+            u."firstname" AS firstName,
+            u."lastname"  AS lastName,
+            u."ssn"       AS ssn,
+            u."email"     AS email,
+            u."password"  AS password,
+            r."roleid"      AS role_roleid,
+            r."rolename" AS role_rolename
+        FROM public."user" u
+        INNER JOIN role r
+        ON u.roleid = r.roleid
+    </select>
+
+    <select id="getUserById" resultMap="UserResult">
+        SELECT
+            u."userid"    AS userId,
+            u."firstname" AS firstName,
+            u."lastname"  AS lastName,
+            u."ssn"       AS ssn,
+            u."email"     AS email,
+            u."password"  AS password,
+            r."roleid"      AS role_roleid,
+            r."rolename" AS role_rolename
+        FROM public."user" u
+        INNER JOIN role r
+        ON u.roleid = r.roleid
+        WHERE u.userid = #{userId}
+    </select>
+
+    <insert id="addUser">
+        INSERT INTO "user" (email, password, firstname, lastname, ssn, roleid)
+        VALUES (#{email}, #{password}, #{firstName}, #{lastName}, #{ssn}, #{roleId});
+    </insert>
+
+    <insert id="addStudent">
+        INSERT INTO "student" (userid)
+        VALUES (#{userId});
+    </insert>
+
+    <insert id="addProfessor">
+        INSERT INTO "professor" (userid)
+        VALUES (#{userId});
+    </insert>
+
+    <select id="findByEmail" resultMap="UserResult">
+        SELECT
+            u."userid"    AS userId,
+            u."firstname" AS firstName,
+            u."lastname"  AS lastName,
+            u."ssn"       AS ssn,
+            u."email"     AS email,
+            u."password"  AS password,
+            r."roleid"      AS role_roleid,
+            r."rolename" AS role_rolename
+        FROM public."user" u
+        INNER JOIN role r
+        ON u.roleid = r.roleid
+        WHERE u."email" = #{email}
+    </select>
+
+    <select id="findStudentByEmail" resultMap="StudentResult">
+        SELECT s."studentid" AS studentId
+        FROM public."student" s
+            INNER JOIN public."user" u
+                ON s.userid = u.userid
+        WHERE u."email" = #{email}
+    </select>
+
+    <select id="findStudentByUserId" resultMap="StudentResult">
+        SELECT s."studentid" AS studentId
+        FROM public."student" s
+        INNER JOIN public."user" u
+        ON s.userid = u.userid
+        WHERE u."userid" = #{userId}
+    </select>
+
+    <select id="findProfessorByEmail" resultMap="ProfessorResult">
+        SELECT p."professorid" AS professorId
+        FROM public."professor" p
+            INNER JOIN public."user" u
+                ON p.userid = u.userid
+        WHERE u."email" = #{email}
+    </select>
+
+    <select id="getEnrolledStudents" resultMap="UserResult">
+        SELECT
+            u."userid"      AS userId,
+            u."firstname"   AS firstName,
+            u."lastname"    AS lastName,
+            u."ssn"         AS ssn,
+            u."email"       AS email,
+            u."password"    AS password,
+            e."result"        AS result,
+            e."isValidated" AS validated,
+            r."roleid"      AS role_roleid,
+            r."rolename" AS role_rolename
+        FROM public."user" u
+            INNER JOIN role r
+                ON u.roleid = r.roleid
+            INNER JOIN student s
+                ON u.userid = s.userid
+            INNER JOIN enrollment e
+                ON s.studentid = e.studentid
+            INNER JOIN course c
+                ON e.coursecode = c.coursecode
+        WHERE c.coursecode = #{courseCode}
+    </select>
+</mapper>

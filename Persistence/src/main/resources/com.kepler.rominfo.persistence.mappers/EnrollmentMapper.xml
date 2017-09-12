@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kepler.rominfo.persistence.mappers.EnrollmentMapper">
+
+    <resultMap id="StudentResult" type="com.kepler.rominfo.persistence.models.Course">
+        <id column="coursecode" property="courseCode"/>
+        <result column="coursename" property="courseName"/>
+        <association property="category" resultMap="CategoryResult" columnPrefix="cat_"/>
+        <collection property="students" resultMap="CourseResult" />
+    </resultMap>
+
+    <resultMap id="CourseResult" type="com.kepler.rominfo.persistence.models.Student">
+        <id column="studentid" property="studentId"/>
+        <result column="firstname"  property="firstName"/>
+        <result column="lastname" property="lastName"/>
+        <result column="ssn" property="ssn"/>
+        <result column="email"  property="email"/>
+        <result column="password" property="password"/>
+        <collection property="courses" resultMap="StudentResult" />
+    </resultMap>
+
+    <resultMap type="Category" id="CategoryResult">
+        <id property="categoryId" column="categoryid"/>
+        <result property="categoryName" column="categoryname"/>
+    </resultMap>
+
+    <select id="getCoursesOfStudent" resultMap="StudentResult">
+        SELECT
+        c.coursecode AS courseCode,
+        c.coursename AS courseName,
+        cat."categoryid" AS cat_categoryid,
+        cat."categoryname" AS cat_categoryname
+        FROM course c
+        INNER JOIN public."category" cat
+        ON c.categoryid = cat.categoryid
+        INNER JOIN enrollment e
+        ON c.coursecode = e.coursecode
+        INNER JOIN public."student" s
+        ON e.studentid = s.studentid
+        WHERE s.studentid =#{studentId}
+    </select>
+
+    <insert id="addEnrollment">
+        INSERT INTO enrollment (studentid, coursecode)
+        values (#{studentId},#{courseCode})
+    </insert>
+
+    <update id="editResult">
+        UPDATE public."enrollment"
+        SET "result" = #{result}
+        WHERE "coursecode" = #{courseCode}
+        AND "studentid" = #{studentId}
+    </update>
+
+    <update id="removeResult">
+        UPDATE public."enrollment"
+        SET "result" = NULL
+        WHERE "coursecode" = #{courseCode}
+        AND "studentid" = #{studentId}
+    </update>
+
+    <update id="validate">
+        UPDATE public."enrollment"
+        SET "isValidated" = TRUE
+        WHERE "coursecode" = #{courseCode}
+        AND "studentid" = #{studentId}
+    </update>
+
+    <update id="invalidate">
+        UPDATE public."enrollment"
+        SET "isValidated" = FALSE
+        WHERE "coursecode" = #{courseCode}
+        AND "studentid" = #{studentId}
+    </update>
+
+</mapper>

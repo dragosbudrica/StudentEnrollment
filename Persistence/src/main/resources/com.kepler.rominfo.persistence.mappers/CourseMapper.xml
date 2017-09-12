@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kepler.rominfo.persistence.mappers.CourseMapper">
+
+    <resultMap type="User" id="UserResult">
+        <id property="userId" column="userid"/>
+        <result property="firstName" column="firstname"/>
+        <result property="lastName" column="lastname"/>
+    </resultMap>
+
+    <resultMap type="Category" id="CategoryResult">
+        <id property="categoryId" column="categoryid"/>
+        <result property="categoryName" column="categoryname"/>
+    </resultMap>
+
+    <resultMap type="Course" id="CourseResult">
+        <id property="courseCode" column="coursecode"/>
+        <result property="courseName" column="coursename"/>
+        <result property="description" column="description"/>
+        <result property="numberOfLectures" column="numberoflectures"/>
+        <result property="startTime" column="starttime"/>
+        <result property="endTime" column="endtime"/>
+        <result property="result" column="result"/>
+        <result property="validated" column="validated"/>
+        <result property="numberOfEnrolledStudents" column="numberOfEnrolledStudents"/>
+        <association property="user" resultMap="UserResult" columnPrefix="user_"/>
+        <association property="category" resultMap="CategoryResult" columnPrefix="cat_"/>
+    </resultMap>
+
+    <resultMap type="Course" id="CourseResultProf">
+        <id property="courseCode" column="coursecode"/>
+        <result property="courseName" column="coursename"/>
+        <association property="user" resultMap="UserResult" columnPrefix="user_"/>
+    </resultMap>
+
+    <resultMap type="Course" id="CourseResultCat">
+        <id property="courseCode" column="coursecode"/>
+        <result property="courseName" column="coursename"/>
+        <association property="category" resultMap="CategoryResult" columnPrefix="cat_"/>
+    </resultMap>
+
+    <select id="getCourseByCode" parameterType="long" resultMap="CourseResult">
+        SELECT
+            c."coursecode"   AS courseCode,
+            c."coursename"   AS courseName,
+            cat."categoryid" AS cat_categoryid,
+            cat."categoryname"       AS cat_categoryname,
+            c."professorid"  AS professorId
+        FROM public."course" c
+            INNER JOIN public."category" cat
+                ON c.categoryid = cat.categoryid
+        WHERE c."coursecode" = #{courseCode}
+    </select>
+
+    <select id="getCourseByName" parameterType="java.lang.String" resultMap="CourseResult">
+        SELECT
+            c."coursecode"     AS courseCode,
+            c."coursename"     AS courseName,
+            cat."categoryid"   AS cat_categoryid,
+            cat."categoryname" AS cat_categoryname,
+            c."description"    AS description,
+            c.numberoflectures AS numberOfLectures,
+            c."starttime"      AS startTime
+        FROM public."course" c
+            INNER JOIN public."category" cat
+                ON c.categoryid = cat.categoryid
+        WHERE c."coursename" = #{courseName}
+    </select>
+
+
+
+    <select id="getAllCourses" resultMap="CourseResult">
+        SELECT
+            c."coursecode"   AS courseCode,
+            c."coursename"   AS courseName,
+            c."starttime" AS startTime,
+            cat."categoryid" AS cat_categoryid,
+            cat."categoryname"       AS cat_categoryname,
+            u."firstname"    AS user_firstname,
+            u."lastname"     AS user_lastname,
+            u."userid"       AS user_userid
+        FROM public."course" c
+            INNER JOIN public."category" cat
+                ON c.categoryid = cat.categoryid
+            INNER JOIN professor p
+                ON p.professorid = c.professorid
+            INNER JOIN public."user" u
+                ON p.userid = u.userid
+    </select>
+
+    <select id="getStudentCourses" resultMap="CourseResult">
+        SELECT
+            c."coursecode"   AS courseCode,
+            c."coursename"   AS courseName,
+            cat."categoryid" AS cat_categoryid,
+            cat."categoryname"       AS cat_categoryname,
+            u."firstname"    AS user_firstname,
+            u."lastname"     AS user_lastname,
+            u."userid"       AS user_userid
+        FROM public."course" c
+            INNER JOIN public."category" cat
+                ON c.categoryid = cat.categoryid
+            INNER JOIN professor p
+                ON c.professorid = p.professorid
+            INNER JOIN public."user" u
+                ON p.userid = u.userid
+            INNER JOIN enrollment e
+                ON c.coursecode = e.coursecode
+            INNER JOIN student s
+                ON e.studentid = s.studentid
+        WHERE s."studentid" = #{studentId}
+    </select>
+
+    <select id="getStudentCoursesWithDates" resultMap="CourseResult">
+        SELECT
+            c."coursecode" AS courseCode,
+            c."coursename" AS courseName,
+            c."starttime"  AS startTime,
+            u."firstname"  AS user_firstname,
+            u."lastname"   AS user_lastname,
+            u."userid"     AS user_userid
+        FROM public."course" c
+            INNER JOIN professor p
+                ON c.professorid = p.professorId
+            INNER JOIN public."user" u
+                ON p.userid = u.userid
+            INNER JOIN enrollment e
+                ON c.coursecode = e.coursecode
+            INNER JOIN student s
+                ON e.studentid = s.studentid
+        WHERE s."studentid" = #{studentId}
+              AND c."starttime" NOTNULL
+    </select>
+
+
+    <select id="getStudentCoursesWithGrades" resultMap="CourseResult">
+        SELECT
+        c."coursecode" AS courseCode,
+        c."coursename" AS courseName,
+            cat."categoryid" AS cat_categoryid,
+            cat."categoryname"       AS cat_categoryname,
+        u."firstname"  AS user_firstname,
+        u."lastname"   AS user_lastname,
+        u."userid"     AS user_userid,
+        e."result" AS result,
+        e."isValidated" AS validated
+        FROM public."course" c
+            INNER JOIN category cat
+                ON c.categoryid = cat.categoryid
+        INNER JOIN professor p
+        ON c.professorid = p.professorId
+        INNER JOIN public."user" u
+        ON p.userid = u.userid
+        INNER JOIN enrollment e
+        ON c.coursecode = e.coursecode
+        INNER JOIN student s
+        ON e.studentid = s.studentid
+        WHERE s."studentid" = #{studentId}
+    </select>
+
+    <select id="getOnlyCoursesWithDates" resultMap="CourseResult">
+        SELECT
+            c."coursecode"   AS courseCode,
+            c."coursename"   AS courseName,
+            cat."categoryid" AS cat_categoryid,
+            cat."categoryname" AS cat_categoryname,
+            c."starttime"    AS startTime
+        FROM public."course" c
+            INNER JOIN public."category" cat
+                ON c.categoryid = cat.categoryid
+        WHERE c."starttime" NOTNULL
+    </select>
+
+
+    <select id="getProfessorCourses" resultMap="CourseResult">
+        SELECT
+            c."coursecode"   AS courseCode,
+            c."coursename"   AS courseName,
+            cat."categoryid" AS cat_categoryid,
+            cat."categoryname" AS cat_categoryname,
+            u."firstname"    AS user_firstname,
+            u."lastname"     AS user_lastname,
+            u."userid"       AS user_userid
+        FROM public."course" c
+            INNER JOIN public."category" cat
+                ON c.categoryid = cat.categoryid
+            INNER JOIN professor p
+                ON c.professorid = p.professorId
+            INNER JOIN public."user" u
+                ON p.userid = u.userid
+        WHERE p."professorid" = #{professorId}
+    </select>
+
+    <select id="getCoursesWithEnrolledStudents" resultMap="CourseResult">
+        SELECT
+        c."coursecode"   AS courseCode,
+        c."coursename"   AS courseName,
+        cat."categoryid" AS cat_categoryid,
+        cat."categoryname" AS cat_categoryname,
+        u."firstname"    AS user_firstname,
+        u."lastname"     AS user_lastname,
+        u."userid"       AS user_userid,
+        (SELECT COUNT(e.coursecode) FROM enrollment e WHERE c.coursecode = e.coursecode) AS numberOfEnrolledStudents
+        FROM public."course" c
+        INNER JOIN public."category" cat
+        ON c.categoryid = cat.categoryid
+        INNER JOIN professor p
+        ON c.professorid = p.professorId
+        INNER JOIN public."user" u
+        ON p.userid = u.userid
+        WHERE p."professorid" = #{professorId}
+    </select>
+
+
+
+    <update id="updateCourseSchedule">
+        UPDATE public."course"
+        SET
+            "starttime" = #{startTime}
+        WHERE "coursename" = #{courseName}
+    </update>
+
+    <insert id="addCourse" parameterType="com.kepler.rominfo.persistence.models.Course">
+        <selectKey order="BEFORE" keyProperty="course.courseCode" keyColumn="course.coursecode" resultType="long">
+            SELECT nextval('course_coursecode_seq')
+        </selectKey>
+        insert into "course" (coursecode, coursename, categoryid, numberoflectures, description, professorid)
+        VALUES (#{course.courseCode},
+        #{course.courseName},#{course.categoryId},#{course.numberOfLectures},#{course.description},#{course.professorId})
+    </insert>
+
+    <update id="editCourse">
+        UPDATE public."course"
+        SET "coursename" = #{courseName},
+            "categoryid" = #{categoryId}
+        WHERE "coursecode" = #{courseCode}
+    </update>
+
+    <delete id="deleteCourse">
+        DELETE FROM public."enrollment"
+        WHERE "coursecode" = #{courseCode};
+        DELETE FROM public."lecture"
+        WHERE "coursecode" = #{courseCode};
+        DELETE FROM public."course"
+        WHERE "coursecode" = #{courseCode};
+    </delete>
+
+
+
+</mapper>
