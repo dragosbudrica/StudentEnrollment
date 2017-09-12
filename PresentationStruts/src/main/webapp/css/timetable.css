@@ -1,0 +1,13 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#image {
+    margin: 11% 20% 15% 25%;
+}
+
+#content {
+    width: 50%;
+    margin-top: 60px;
+    margin-left: 300px;
+}

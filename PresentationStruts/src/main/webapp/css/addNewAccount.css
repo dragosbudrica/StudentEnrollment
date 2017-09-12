@@ -1,0 +1,115 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Form Module */
+.form-module {
+    position: relative;
+    background: #ffffff;
+    max-width: 500px;
+    width: 40%;
+    border-top: 5px solid #33b5e5;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+    margin: 50px 250px 100px 550px;
+}
+
+.form-module .form {
+    display: none;
+    padding: 40px;
+}
+.form-module .form:nth-child(2) {
+    display: block;
+}
+.form-module h2 {
+    margin: 0 0 20px;
+    color: #33b5e5;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1;
+}
+.form-module input {
+    outline: none;
+    display: block;
+    width: 100%;
+    border: 1px solid #d9d9d9;
+    margin: 0 0 20px;
+    padding: 10px 15px;
+    margin-bottom: auto;
+    box-sizing: border-box;
+    font-weight: 400;
+    -webkit-transition: 0.3s ease;
+    transition: 0.3s ease;
+}
+
+.form-module select {
+    outline: none;
+    display: block;
+    width: 100%;
+    border: 1px solid #d9d9d9;
+    margin: 0 0 20px;
+    padding: 10px 15px;
+    box-sizing: border-box;
+    font-weight: 400;
+    font-size: 15px;
+    -webkit-transition: 0.3s ease;
+    transition: 0.3s ease;
+}
+
+.form-module input:focus {
+    border: 1px solid #33b5e5;
+    color: #333333;
+}
+.form-module button {
+    cursor: pointer;
+    background: #33b5e5;
+    width: 100%;
+    border: 0;
+    padding: 10px 15px;
+    color: #ffffff;
+    -webkit-transition: 0.3s ease;
+    transition: 0.3s ease;
+}
+.form-module button:hover {
+    background: #178ab4;
+}
+.form-module .cta {
+    background: #f2f2f2;
+    width: 100%;
+    padding: 15px 40px;
+    box-sizing: border-box;
+    color: #666666;
+    font-size: 12px;
+    text-align: center;
+}
+.form-module .cta a {
+    color: #333333;
+    text-decoration: none;
+}
+
+.error{
+    display: none;
+    margin-left: 10px;
+}
+
+.error_show{
+    color: red;
+    margin-left: 10px;
+
+}
+
+input.invalid{
+    border: 2px solid red;
+}
+
+select.valid{
+    border: 2px solid green;
+}
+
+.input_with_error {
+    margin-bottom: 30px;
+}
+
+#message {
+    display: none;
+    text-align: center;
+}
